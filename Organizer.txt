@@ -1,0 +1,112 @@
+UDR:
+	Subject:
+		Nominal Subject = "nsubj"
+			*Nominal Subject (Passive) = "nsubjpass"
+			*Expletive = "expl
+		Open Clausal Complement = "xcomp"
+		*Agent = "agent"
+
+		Clausal Subject = "csubj"
+		*Clausal Subject (Passive) = "csubjpass"
+
+	Direct Object:
+		Object = "obj"
+			*DirectObject = "dobj"
+				*Attribute = "attr"
+
+	Verb Phrase:
+		Auxiliary = "aux"
+			*Auxiliary (Passive) = "auxpass"	
+		*Negation Modifier = "neg"
+		*Particle = "prt"
+
+		Adverbial Clause Modifier = "advcl"
+
+	Noun Phrase:
+		Nominal Modifier = "nmod"
+		Numeric Modifier = "nummod"
+		Adverbial Modifier = "advmod"
+		Adjectival Modifier = "amod"
+		*Possession Modifier = "poss"
+		*Predeterminer = "predet"
+		Determiner = "det"
+		Case Marking = "case"
+		Compound = "compound"
+
+		Clausal Modifier of Noun (Adjectival Clause) = "acl"
+		*Relative Clause Modifier = "relcl"
+		*Adjectival Clausal Complement = "acomp"
+
+	Prepositional Phrase:
+		*Prepositional Modifier = "prep"
+		*Complement of a Preposition = "pcomp"
+			*Prepositional Object = "pobj"
+
+	Appositive:
+		Appositional Modifier = "appos"
+
+	Conjunction:
+		Conjunct = "conj"
+		
+
+UDRIgnore:
+	Indirect Object
+		*Dative
+	Clausal Complement
+	Oblique Nominal
+	Vocative
+	Expletive
+	Dislocated
+	Discourse Element
+	Copula
+	Marker
+	Classifier
+	Coordinating Conjunction
+	Fixed Multiword Expression
+	Flat Multiword Expression
+	List
+	Parenthetical Modifier (Parataxis)
+	Orphan
+	Goes With
+	Reparandum
+	Punctuation
+	Root
+	Unspecified Dependency
+	*Object Predicate
+	*Pre-correlative Conjunction
+	*Meta Modifier
+	*Noun Phrase as Adverbial Modifier
+
+UPOS:
+	Noun:
+		Noun = "NOUN"
+		Proper Noun = "PROPN"
+		Pronoun = "PRON"
+		Numeral = "NUM"
+
+	Verb:
+		Verb = "VERB"
+
+	Adposition:
+		Adposition = "ADP"
+
+	Aux:
+		Auxiliary = "AUX"
+
+	Noun Modifiers:
+		Adjective = "ADJ"
+		Determiner = "DET"
+		Numeral = "NUM"
+		Symbol = "SYM"
+
+	Verb Modifiers:
+		Adverb = "ADV"
+		Particle = "PART"
+
+UPOSIgnore:
+	Interjection
+	Coordinating Conjunction
+	Subordinating Conjunction
+	Punctuation
+	Other
+	
