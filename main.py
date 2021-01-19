@@ -1,59 +1,49 @@
 from pathlib import Path
 from functions import *
-
-
-
-
-FILE_PATH = "../Texts/"
-FILE_NAME = "DEV-MUC3-"
-FILE_OUT = "patterns.cases"
-
-MULT_FILES = True
-FILE_START = 1
-FILE_END = 1              #1300
-FILL_DIGITS = True
-DIGIT_COUNT = 4
-
-WRITE_TO_FILE = True
-DISPLACY = False
+from settings import *
 
 
 
 
 
-OUT_FILE = open(FILE_OUT, "w")
+# opens the necessary output file to write to
+if WRITE_TO_FILE:
+    out_file = open(FILE_OUT, "w")
 
+'''
+Increments through all input files and calls the pattern functions
+'''
 for i in range(FILE_START, FILE_END + 1):
+    # automatically adds a number to the end if there are multiple files
+    #  and fills the number with 0s if that setting is active
     file_num = ""
     if MULT_FILES and FILL_DIGITS:
         file_num = str(i).zfill(DIGIT_COUNT)
     elif MULT_FILES:
         file_num = str(i)
-        
-    file_to_open = Path(FILE_PATH + FILE_NAME + file_num)
-    f = open(file_to_open, 'r')
-    text = f.read()
+
+    # opens the file to read and creates the document for the dependency
+    #  parser
+    file_to_open = Path(FILE_IN_PATH + FILE_IN + file_num)
+    in_file = open(file_to_open, 'r')
+    text = in_file.read()
 
     doc = create_doc(text)
 
-    for sent in get_sents(doc):
-        for token in sent:
-            dep = get_dep(token)
-            if dep in NSUBJ:
-                nsubj(token)
-            elif dep in NSUBJPASS:
-                nsubjpass(token)
-            elif dep in DOBJ:
-                dobj(token)
-            elif dep in POBJ:
-                pobj(token)
-                          
-    f.close()
+    # increments through each token and calls the functions to check for
+    #  patterns
+    for token in doc:
+        base_nsubj(token)
+        base_nsubjpass(token)
+        base_dobj(token)
+        base_pobj(token)
+
+    # closes the file and stops if there's only one input file
+    in_file.close()
 
     if not MULT_FILES:
         break
-    
-OUT_FILE.close()
 
-if DISPLACY:
-    displacy.serve(doc, style="dep")
+# closes the output file
+if WRITE_TO_FILE:
+    out_file.close()

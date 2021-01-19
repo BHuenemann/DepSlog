@@ -5,7 +5,30 @@ import spacy
 
 
 '''
+CONSTANTS
+'''
+FILE_IN_PATH = "../Texts/"
+FILE_IN = "DEV-MUC3-"
+
+MULT_FILES = True
+FILE_START = 1
+FILE_END = 1              #1300
+FILL_DIGITS = True
+DIGIT_COUNT = 4
+
+PATTERN_COUNT = 15
+
+WRITE_TO_FILE = False
+FILE_OUT = "patterns.cases"
+
+
+
+
+
+'''
 DEPENDENCY LABELS
+
+Acceptable dependencies for each category
 '''
 NSUBJ = ["nsubj", "expl"]
 NSUBJPASS = ["nsubjpass"]
