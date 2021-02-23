@@ -7,7 +7,6 @@ from settings import *
 # Variables for the output file, writing function, and tag array
 OUT_FILE = open(FILE_OUT, "w")
 WRITE = OUT_FILE.write if WRITE_TO_FILE else print
-TAGS = [1] * PATTERN_COUNT
 
 
 
@@ -42,57 +41,67 @@ WRITE PATTERN:
 15. noun prep <np>
 
 16. premod <noun>
+17. NPConj <np>
+18. PredAdj <subj>
 '''
 def write_pattern(case, outs, p1s, p2s = [""], active = False):
     # iterates through every combination of inputs
-    for out in outs:
+    if COMBINE_CONJ:
+        separator = " " + CONJ_SEPARATOR + " "
+        out = separator.join(outs)
+
         for p1 in p1s:
             for p2 in p2s:
-                # creates a tag number to put on the end if it isn't
-                #  a premod
-                if 1 <= case <= PATTERN_COUNT:
-                    tag = "_" + str(TAGS[case - 1])
+                write_case(case, out, p1, p2, active)
+            
+    else:
+        for out in outs:
+            for p1 in p1s:
+                for p2 in p2s:
+                    write_case(case, out, p1, p2, active)
 
-                # matches the case and prints the pattern
-                if case == 1:
-                    WRITE(out + " * <subj>_PassVp__" + p1 + tag)
-                elif case == 2:
-                    WRITE(out + " * <subj>_ActVp__" + p1 + "_" + tag)
-                elif case == 3:
-                    WRITE(out + " * <subj>_ActVp_Dobj__" + p1 + "_" + p2 + tag)
-                elif case == 4:
-                    if not active:
-                        WRITE(out + " * <subj>_PassInfVp__" + p1 + "_" + p2 + tag)
-                    else:
-                        WRITE(out + " * <subj>_ActInfVp__" + p1 + "_" + p2 + tag)
-                elif case == 5 or case == 6:
-                    WRITE(out + " * <subj>_AuxVp_Dobj__" + p1 + "_" + p2 + tag)
-                elif case == 7:
-                    WRITE(out + " * ActVp_<dobj>__" + p1 + tag)
-                elif case == 8:
-                    WRITE(out + " * infinitive_verb_<dobj>__" + p1 + tag)
-                elif case == 9:
-                    if not active:
-                        WRITE(out + " * PassInfVp_<dobj>__" + p1 + "_" + p2 + tag)
-                    else:
-                        WRITE(out + " * ActInfVp_<dobj>__" + p1 + "_" + p2 + tag)
-                elif case == 10 or case == 11:
-                    WRITE(out + " * Subj_AuxVp_<dobj>__" + p1 + "_" + p2 + tag)
-                elif case == 12:
-                    WRITE(out + " * InfVp_Prep_<NP>__" + p1 + "_" + p2 + tag)
-                elif case == 13:
-                    WRITE(out + " * ActVp_Prep_<NP>__" + p1 + "_" + p2 + tag)
-                elif case == 14:
-                    WRITE(out + " * PassVp_Prep_<NP>__" + p1 + "_" + p2 + tag)
-                elif case == 15:
-                    WRITE(out + " * Np_Prep_<NP>__" + p1 + "_" + p2 + tag)
-                elif case == 16:
-                    WRITE(out + " * " + p1 + "_premod")
+def write_case(case, out, p1, p2, active):
+    # matches the case and prints the pattern
+    if case == 1:
+        WRITE(out + " * <subj>_PassVp__" + p1)
+    elif case == 2:
+        WRITE(out + " * <subj>_ActVp__" + p1)
+    elif case == 3:
+        WRITE(out + " * <subj>_ActVp_Dobj__" + p1 + "_" + p2)
+    elif case == 4:
+        if not active:
+            WRITE(out + " * <subj>_PassInfVp__" + p1 + "_" + p2)
+        else:
+            WRITE(out + " * <subj>_ActInfVp__" + p1 + "_" + p2)
+    elif case == 5 or case == 6:
+        WRITE(out + " * <subj>_AuxVp_Dobj__" + p1 + "_" + p2)
+    elif case == 7:
+        WRITE(out + " * ActVp_<dobj>__" + p1)
+    elif case == 8:
+        WRITE(out + " * infinitive_verb_<dobj>__" + p1)
+    elif case == 9:
+        if not active:
+            WRITE(out + " * PassInfVp_<dobj>__" + p1 + "_" + p2)
+        else:
+            WRITE(out + " * ActInfVp_<dobj>__" + p1 + "_" + p2)
+    elif case == 10 or case == 11:
+        WRITE(out + " * Subj_AuxVp_<dobj>__" + p1 + "_" + p2)
+    elif case == 12:
+        WRITE(out + " * InfVp_Prep_<NP>__" + p1 + "_" + p2)
+    elif case == 13:
+        WRITE(out + " * ActVp_Prep_<NP>__" + p1 + "_" + p2)
+    elif case == 14:
+        WRITE(out + " * PassVp_Prep_<NP>__" + p1 + "_" + p2)
+    elif case == 15:
+        WRITE(out + " * Np_Prep_<NP>__" + p1 + "_" + p2)
+        
+    elif case == 16:
+        WRITE(out + " * " + p1 + "_premod")
+    elif case == 17:
+        WRITE(out + " * NPConj_<NP>__" + p1)
+    elif case == 18:
+        WRITE(out + " * PredAdj_<subj>__" + p1)
 
-                # increments the tag array if it wasn't a premod
-                if 1 <= case <= PATTERN_COUNT:
-                    TAGS[case - 1] += 1
-
-                # adds a newline if it's writing to a file
-                if WRITE_TO_FILE:
-                    WRITE("\n")
+    # adds a newline if it's writing to a file
+    if WRITE_TO_FILE:
+        WRITE("\n")

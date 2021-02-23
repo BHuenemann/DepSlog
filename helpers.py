@@ -7,11 +7,11 @@ from settings import *
 '''
 Wrapper function for recursively finding the noun phrase of a token
 '''
-def find_np(token):
+def find_np(token, conj = True):
     # finds the document, calls the recursive function, and sorts the resulting
     #  indices so that they are in order
     doc = get_doc(token)
-    index_list = find_np_rec(token)
+    index_list = find_np_rec(token, conj)
     for l in index_list:
         l.sort()
 
@@ -35,7 +35,7 @@ track of the modifiers that have been used so far.
 
 Returns a list of all of the noun phrase index lists associated with the token
 '''
-def find_np_rec(token):
+def find_np_rec(token, conj):
     # starts with the current token's index
     index_list = [[get_index(token)]]
 
@@ -47,7 +47,7 @@ def find_np_rec(token):
         # if the dependency is that of the same noun phrase, it combines calls
         #  itself recursively and combines the results
         if c_dep in NP:
-            c_np = find_np_rec(c)
+            c_np = find_np_rec(c, conj)
 
             # this takes all adds the first element of index_list to all of the
             #  elements of c_np. Then it takes the result of that to replace the
@@ -65,7 +65,7 @@ def find_np_rec(token):
         elif (c_dep in PREP) and (get_text(c).upper() == "OF"):
             for p in get_children(c):
                 if get_dep(p) in POBJ:
-                    p_np = find_np_rec(p)
+                    p_np = find_np_rec(p, conj)
                     
                     # same mapping as the example before except it includes the
                     #  index of the preposition
@@ -73,8 +73,8 @@ def find_np_rec(token):
                         + index_list[1:]
         # if the dependency is either a conjunction or an appositive, it finds
         #  the noun phrase of that word and adds it to the end of index_list
-        elif (c_dep in CONJ) or (c_dep in APPOS):
-            index_list += find_np_rec(c)
+        elif conj and (c_dep in CONJ):
+            index_list += find_np_rec(c, conj)
 
     return index_list
 
@@ -138,3 +138,91 @@ is mainly used for printing
 '''
 def find_conj_text(token):
     return list(map(lambda t : get_text(t), find_conj(token)))
+
+'''
+Function that finds the head conjunction of a token
+'''
+def find_conj_head(token):
+    head = get_head(token)
+    while get_dep(head) in CONJ:
+        head = get_head(head)
+    return head
+
+'''
+Function that checks if the token is a verb
+'''
+def is_verb(token):
+    if get_pos(token) in VERB:
+        return True
+    return False
+
+'''
+Function that checks if the token is a noun
+'''
+def is_noun(token):
+    if get_pos(token) in NOUN or get_pos(token) in NUM:
+        return True
+    return False
+
+'''
+Function that checks if a verb token is passive
+'''
+def is_passive(token):
+    # checks if any children are passive
+    for c in get_children(token):
+        c_dep = get_dep(c)
+        if (c_dep in NSUBJPASS) or (c_dep in AUXPASS):
+            return True
+        
+    # if it's used in conjunction with another verb, it checks that verb
+    if get_dep(token) in CONJ:
+        return is_passive(get_head(token))
+    
+    return False
+
+'''
+Function that checks if a token is an infinitive
+'''
+def is_infinitive(token):
+    if not is_verb(token):
+        return False
+    
+    doc = get_doc(token)
+    left = get_token(doc, get_index(token) - 1)
+
+    # checks if the left token is an auxiliary verb equal to "to"
+    if get_dep(left) in AUX and get_text(left).upper() == "TO":
+        return True
+        
+    return False
+
+'''
+Function that checks if a token is an auxiliary "be" or "have" verb
+'''
+def is_aux_be_have(token):
+    if is_verb(token):
+        lemma = get_lemma(token)
+        if lemma in AUX_BE or lemma in AUX_HAVE:
+            return True
+    return False
+
+'''
+Function that finds the lemma and tries to match it's capitalization
+'''
+def find_lemma(token):
+        lemma = get_lemma(token)
+        v_text = get_text(token)
+
+        if lemma in AUX_BE:
+            lemma = "be"
+        elif lemma in AUX_HAVE:
+            lemma = "have"
+
+        if LEMMA_MATCH_CASE:
+            # makes sure that the base form matches the capitalization of the verb
+            if v_text.isupper():
+                lemma = lemma.upper()
+            elif not v_text.islower():
+                lemma = lemma.capitalize()
+
+        return lemma

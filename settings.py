@@ -12,13 +12,22 @@ FILE_IN = "DEV-MUC3-"
 
 MULT_FILES = True
 FILE_START = 1
-FILE_END = 1              #1300
+FILE_END = 2              #1300
 FILL_DIGITS = True
 DIGIT_COUNT = 4
+
+ENABLE_PREMOD = False
+
+ENABLE_APPOS = False
+COMBINE_CONJ = True
+CONJ_SEPARATOR = ":CONJ"
+
+LEMMA_MATCH_CASE = True
 
 PATTERN_COUNT = 15
 
 WRITE_TO_FILE = False
+TEXT_INPUT = False
 FILE_OUT = "patterns.cases"
 
 
@@ -33,19 +42,34 @@ Acceptable dependencies for each category
 NSUBJ = ["nsubj", "expl"]
 NSUBJPASS = ["nsubjpass"]
 XCOMP = ["xcomp"]
-AUX = ["aux", "auxpass"]
+AUX = ["aux"]
+AUXPASS = ["auxpass"]
 AGENT = ["agent"]
 
 DOBJ = ["dobj", "attr"]
 
 VP = ["neg", "prt"]
-NP = ["nmod", "nummod", "advmod", "amod", "poss", "predet", "det", "case", "compound"]
+NP = ["neg", "nmod", "nummod", "advmod", "amod", "poss", "predet", "det", "case", "compound", "dep"]
+PREMOD = ["nmod", "advmod", "amod", "compound"]
 
 PREP = ["prep"]
 POBJ = ["pobj"]
 
-APPOS = ["appos"]
-CONJ = ["conj"]
+CONJ_RAW = ["conj"]
+APPOS_RAW = ["appos"]
+CONJ = CONJ_RAW + APPOS_RAW if ENABLE_APPOS else CONJ_RAW
+
+AUX_BE = ["be", "are"]
+AUX_HAVE = ["have"]
+
+ROOT = ["ROOT"]
+
+'''
+POS LABELS
+'''
+NOUN = ["NOUN", "PRON", "PROPN"]
+NUM = ["NUM"]
+VERB = ["VERB"]
 
 
 
@@ -76,6 +100,9 @@ def get_root(span):
 
 def get_dep(token):
     return token.dep_
+
+def get_pos(token):
+    return token.pos_
 
 def get_head(token):
     return token.head
