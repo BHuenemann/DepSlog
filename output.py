@@ -13,13 +13,38 @@ WRITE = OUT_FILE.write if WRITE_TO_FILE else print
 
 
 '''
-General function for recording patterns
+General function for recording patterns. It iterates through 'write_case'
+after doing some preliminary logic to determine how it should be formatted.
 
 'case' is a selector for the pattern form that it fits
 'outs' is a list of the noun phrases in text form that were extracted
 'p1s' is a list of first words in the patterns that match
 'p2s' is an optional list of second words in the patterns that match
 'active' is for a couple of cases that combine active and passive voice
+
+If COMBINE_CONJ is enabled, it combines conjunction noun phrases in 'out'
+into a single noun phrase.
+'''
+def write_pattern(case, outs, p1s, p2s = [""], active = False):
+    # iterates through every combination of inputs
+    if COMBINE_CONJ:
+        separator = " " + CONJ_SEPARATOR + " "
+        out = separator.join(outs)
+
+        for p1 in p1s:
+            for p2 in p2s:
+                write_case(case, out, p1, p2, active)
+            
+    else:
+        for out in outs:
+            for p1 in p1s:
+                for p2 in p2s:
+                    write_case(case, out, p1, p2, active)
+
+
+
+'''
+Function that writes a single pattern of the specified case.
 
 WRITE PATTERN:
 1.  <subj> passive_verb
@@ -42,26 +67,9 @@ WRITE PATTERN:
 
 16. premod <noun>
 17. NPConj <np>
-18. PredAdj <subj>
+18. <subj> PredAdj
 '''
-def write_pattern(case, outs, p1s, p2s = [""], active = False):
-    # iterates through every combination of inputs
-    if COMBINE_CONJ:
-        separator = " " + CONJ_SEPARATOR + " "
-        out = separator.join(outs)
-
-        for p1 in p1s:
-            for p2 in p2s:
-                write_case(case, out, p1, p2, active)
-            
-    else:
-        for out in outs:
-            for p1 in p1s:
-                for p2 in p2s:
-                    write_case(case, out, p1, p2, active)
-
 def write_case(case, out, p1, p2, active):
-    # matches the case and prints the pattern
     if case == 1:
         WRITE(out + " * <subj>_PassVp__" + p1)
     elif case == 2:
@@ -100,7 +108,7 @@ def write_case(case, out, p1, p2, active):
     elif case == 17:
         WRITE(out + " * NPConj_<NP>__" + p1)
     elif case == 18:
-        WRITE(out + " * PredAdj_<subj>__" + p1)
+        WRITE(out + " * <subj>_PredAdj__" + p1)
 
     # adds a newline if it's writing to a file
     if WRITE_TO_FILE:

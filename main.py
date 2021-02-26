@@ -13,13 +13,17 @@ if WRITE_TO_FILE:
     out_file = open(FILE_OUT, "w")
 
 '''
-Increments through all input files and calls the pattern functions
+Increments through all input files and calls the pattern functions. It goes through
+the files twice if premods are enabled to separate those patterns.
 '''
 PASS_TWICE = 2 if ENABLE_PREMOD else 1
 for i in range(0, PASS_TWICE):
-    file_end = FILE_START + 1 if TEXT_INPUT else FILE_END + 1
+    # if console input is enabled it sets the file end to be one after the start
+    #  so that it only loops through once.
+    file_end = FILE_START + 1 if CONSOLE_INPUT else FILE_END + 1
+    
     for j in range(FILE_START, file_end):
-        if not TEXT_INPUT:
+        if not CONSOLE_INPUT:
             # automatically adds a number to the end if there are multiple files
             #  and fills the number with 0s if that setting is active
             file_num = ""
@@ -58,16 +62,18 @@ for i in range(0, PASS_TWICE):
                     base_aux(token)
                     base_nprep(token)
                     addon_conj(token)
+                    addon_predadj(token)
                 elif i == 1:
                     base_premod(token)
 
         # closes the file and stops if there's only one input file
-        if not TEXT_INPUT:
+        if not CONSOLE_INPUT:
             in_file.close()
 
         if not MULT_FILES:
             break
 
+# TEMPORARY -- displays the dependencies for easy viewing with displacy
 displacy.serve(doc, style="dep")
     
 # closes the output file

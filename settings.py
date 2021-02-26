@@ -24,10 +24,8 @@ CONJ_SEPARATOR = ":CONJ"
 
 LEMMA_MATCH_CASE = True
 
-PATTERN_COUNT = 15
-
 WRITE_TO_FILE = False
-TEXT_INPUT = False
+CONSOLE_INPUT = False
 FILE_OUT = "patterns.cases"
 
 
@@ -42,6 +40,7 @@ Acceptable dependencies for each category
 NSUBJ = ["nsubj", "expl"]
 NSUBJPASS = ["nsubjpass"]
 XCOMP = ["xcomp"]
+ACOMP = ["acomp"]
 AUX = ["aux"]
 AUXPASS = ["auxpass"]
 AGENT = ["agent"]
