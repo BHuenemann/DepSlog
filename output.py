@@ -70,6 +70,10 @@ WRITE PATTERN:
 18. <subj> PredAdj
 '''
 def write_case(case, out, p1, p2, active):
+    out = out.strip(STRIP_PUNC).lower()
+    p1 = p1.strip(STRIP_PUNC).lower()
+    p2 = p2.strip(STRIP_PUNC).lower()
+    
     if case == 1:
         WRITE(out + " * <subj>_PassVp__" + p1)
     elif case == 2:

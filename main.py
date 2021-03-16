@@ -1,4 +1,5 @@
 import spacy
+import os
 from spacy import displacy
 from pathlib import Path
 from functions import *
@@ -8,42 +9,46 @@ from settings import *
 
 
 
-# opens the necessary output file to write to
-if WRITE_TO_FILE:
-    out_file = open(FILE_OUT, "w")
+def process_doc(doc):
+    # increments through each token and calls the functions to check for
+    #  patterns
+    for sent in get_sents(doc):
+        for token in sent:
+            base_passive(token)
+            base_active(token)
+            base_inf(token)
+            base_aux(token)
+            base_nprep(token)
+            #addon_conj(token)
+            #addon_predadj(token)
+            #base_premod(token)
 
+
+            
 '''
-Increments through all input files and calls the pattern functions. It goes through
-the files twice if premods are enabled to separate those patterns.
+Increments through all input files and calls the pattern functions.
 '''
-PASS_TWICE = 2 if ENABLE_PREMOD else 1
-for i in range(0, PASS_TWICE):
-    # if console input is enabled it sets the file end to be one after the start
-    #  so that it only loops through once.
-    file_end = FILE_START + 1 if CONSOLE_INPUT else FILE_END + 1
-    
-    for j in range(FILE_START, file_end):
+with open(FILE_OUT, "w") as out_file:
+    count = 0
+    iterator = range(0, 1) if CONSOLE_INPUT else iter(sorted(os.listdir(FILE_IN_PATH)))
+    for file_name in iterator:
         if not CONSOLE_INPUT:
-            # automatically adds a number to the end if there are multiple files
-            #  and fills the number with 0s if that setting is active
-            file_num = ""
-            if MULT_FILES and FILL_DIGITS:
-                file_num = str(j).zfill(DIGIT_COUNT)
-            elif MULT_FILES:
-                file_num = str(j)
+            if FILE_TYPE == "" and "." in file_name:
+                continue
+            elif not file_name.endswith(FILE_TYPE):
+                continue
 
             # opens the file to read and creates the document for the dependency
             #  parser
-            file_to_open = Path(FILE_IN_PATH + FILE_IN + file_num)
-            in_file = open(file_to_open, 'r')
-            text = in_file.read()
-        
+            file_to_open = Path(FILE_IN_PATH + file_name)
+            with open(file_to_open, 'r') as in_file:
+                text = in_file.read()
             doc = create_doc(text)
-            
+            process_doc(doc)
         else:
             text = input("Enter a sentence: ")
             doc = create_doc(text)
-        
+
             for sent in get_sents(doc):
                 for token in sent:
                     print("\n  " + get_text(token) + \
@@ -51,31 +56,15 @@ for i in range(0, PASS_TWICE):
                           "\n\t" + get_pos(token))
             print("\n")
 
-        # increments through each token and calls the functions to check for
-        #  patterns
-        for sent in get_sents(doc):
-            for token in sent:
-                if i == 0:
-                    base_passive(token)
-                    base_active(token)
-                    base_inf(token)
-                    base_aux(token)
-                    base_nprep(token)
-                    addon_conj(token)
-                    addon_predadj(token)
-                elif i == 1:
-                    base_premod(token)
+            process_doc(doc)
 
-        # closes the file and stops if there's only one input file
+        count += 1
+        if WRITE_TO_FILE and PRINT_PROGRESS and count % PROGRESS_INTERVAL == 0:
+            print("Processing file: " + file_name)
+
+        # closes the file
         if not CONSOLE_INPUT:
             in_file.close()
 
-        if not MULT_FILES:
-            break
-
 # TEMPORARY -- displays the dependencies for easy viewing with displacy
 displacy.serve(doc, style="dep")
-    
-# closes the output file
-if WRITE_TO_FILE:
-    out_file.close()

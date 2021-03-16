@@ -1,3 +1,4 @@
+import truecase
 import spacy
 
 
@@ -8,23 +9,20 @@ import spacy
 CONSTANTS
 '''
 FILE_IN_PATH = "../Texts/"
-FILE_IN = "DEV-MUC3-"
+FILE_TYPE = ""
+PRINT_PROGRESS = True
+PROGRESS_INTERVAL = 10
 
-MULT_FILES = True
-FILE_START = 1
-FILE_END = 2              #1300
-FILL_DIGITS = True
-DIGIT_COUNT = 4
-
-ENABLE_PREMOD = False
-
+TRUE_CASE = True
 ENABLE_APPOS = False
 COMBINE_CONJ = True
 CONJ_SEPARATOR = ":CONJ"
 
 LEMMA_MATCH_CASE = True
 
-WRITE_TO_FILE = False
+STRIP_PUNC = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+
+WRITE_TO_FILE = True
 CONSOLE_INPUT = False
 FILE_OUT = "patterns.cases"
 
@@ -77,9 +75,12 @@ VERB = ["VERB"]
 '''
 GETTER METHODS
 '''
+nlp = spacy.load ("en_core_web_lg")
 def create_doc(text):
-    nlp = spacy.load ("en_core_web_sm")
-    content = text.replace('\n', ' ')
+    if TRUE_CASE:
+        content = truecase.get_true_case(text).replace('\n', ' ')
+    else:
+        content = text.replace('\n', ' ')
     return nlp(content)
 
 def get_doc(token):

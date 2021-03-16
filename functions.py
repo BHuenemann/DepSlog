@@ -80,7 +80,7 @@ def base_passive(token, focus_arg = None):
                     
     if get_dep(focus) in CONJ:
         head_conj = find_conj_head(focus)
-        base_active(token, head_conj)
+        base_passive(token, head_conj)
 
 '''
 Basic function that handles active verb patterns. It returns immediately
@@ -335,7 +335,7 @@ in reverse order from each other.
 CASES:
 17. NPConj <np>
 '''
-def addon_conj(token):
+def addon_conj(token, np_dict):
     if get_dep(token) not in CONJ:
         return
 
@@ -364,7 +364,7 @@ any subjects, it writes them in a pattern.
 CASE:
 18. <subj> PredAdj
 '''
-def addon_predadj(token):
+def addon_predadj(token, np_dict):
     if get_dep(token) not in ACOMP:
         return
 
